@@ -51,6 +51,15 @@ class Table2:
         cursor.execute(queryString)
         db.commit()
 
+    def GetPassword(self, username):
+
+        cursor.execute("""USE userDB""")
+        db.commit()
+        cursor.execute("SELECT password FROM userTable WHERE username=" + "\'" + username + "\'")
+        row = cursor.fetchone()
+        db.commit()
+        return row
+
     def CheckUserExistance(self, username):
 
         cursor.execute("""USE userDB""")
@@ -60,6 +69,23 @@ class Table2:
         db.commit()
         return row
 
+    def Login(self, username, password):
+
+        cursor.execute("""USE userDB""")
+        db.commit()
+        cursor.execute("SELECT username FROM userTable WHERE username=" + "\'" + username + "\'")
+        row = cursor.fetchone()
+        db.commit()
+        if row is not None:
+            passwordObtainedFromDB = self.GetPassword(username)[0]
+
+            if passwordObtainedFromDB == password:
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def CheckAdminExistance(self, username):
 
         cursor.execute("""USE userDB""")
@@ -68,6 +94,7 @@ class Table2:
             "SELECT username FROM userTable WHERE username=" + "\'" + username + "\'" + "AND admin=" + "\'1\'")
         row = cursor.fetchone()
         db.commit()
+
         return row
 
     def CreateNewUser(self, user):
@@ -112,11 +139,4 @@ class Table2:
 
         return json.loads(json.dumps(data))
 
-    def GetPassword(self, username):
 
-        cursor.execute("""USE userDB""")
-        db.commit()
-        cursor.execute("SELECT password FROM userTable WHERE username=" + "\'" + username + "\'")
-        row = cursor.fetchone()
-        db.commit()
-        return row

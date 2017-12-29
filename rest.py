@@ -1,12 +1,23 @@
-from flask import Flask, jsonify, abort, make_response, request
+from flask import Flask, jsonify, abort, make_response, request, g
 from flask_httpauth import HTTPBasicAuth
 from Table2 import Table2
 from DTO.userDTO import userDTO
+from DTO.userLoginDTO import userLoginDTO
 import json
 
-
+auth2 = HTTPBasicAuth()
 auth = HTTPBasicAuth()
 authAdmin = HTTPBasicAuth()
+
+
+@auth2.verify_password
+def verify_password(username_or_token,password):
+    # first try to authenticate by token
+    user = userLoginDTO.verify_auth_token(username_or_token)
+    if not user:
+        return False
+
+    return True
 
 
 @auth.get_password
@@ -59,8 +70,31 @@ def new_user():
     return jsonify({'tasks': 'done'}), 201
 
 
+@app.route('/api/users/foo', methods=['GET'])
+@auth2.login_required
+def new_foo():
+    return jsonify({'tasks': 'asdasdasdasdsad'}), 201
+
+
+@app.route('/api/users/login', methods=['POST'])
+def login():
+    user = userLoginDTO(request.json.get('username'), request.json.get('password'))
+
+    if user.username is None or user.password is None:
+        abort(400)  # missing arguments
+
+    if databaseObj.Login(user.username,user.password) is False:
+        return jsonify({'Message': 'Username or password is wrong.'}), 400  # existing user
+
+    #return jsonify({'tasks': 'Login Succeed'}), 201
+
+    token = user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
+
+
 @app.route('/api/get/<database_name>/<table_name>', methods=['GET'])
-@authAdmin.login_required
+@auth2.login_required
+#@authAdmin.login_required
 def get_all_info(database_name, table_name):
     response = databaseObj.GetAllInfo(database_name, table_name)
 
