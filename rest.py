@@ -102,7 +102,7 @@ def get_all_info(database_name, table_name):
 
 
 @app.route('/api/create/<database_name>/<table_name>', methods=['POST'])
-@authAdmin.login_required
+@auth2.login_required
 def create_database(database_name, table_name):
     if not request.json:
         abort(400)
@@ -114,8 +114,8 @@ def create_database(database_name, table_name):
 
 
 @app.route('/api/fill/<database_name>/<table_name>', methods=['POST'])
-@auth.login_required
-def create_table(database_name, table_name):  #isim düzeltilcek
+@auth2.login_required
+def create_table(database_name, table_name):
     if not request.json:
         abort(400)
 

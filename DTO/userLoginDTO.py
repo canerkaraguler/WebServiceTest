@@ -9,7 +9,7 @@ class userLoginDTO:
 
 
     def generate_auth_token(self, expiration=600):
-        s = Serializer("super secret key"+self.username, expires_in=expiration)
+        s = Serializer("super secret key", expires_in=expiration)
         print(s)
         return s.dumps({'username': self.username})
 
