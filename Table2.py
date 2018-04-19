@@ -2,7 +2,7 @@ import mysql.connector as conn
 import json
 
 
-db = conn.connect(host="54.202.76.117", user="cnrkrglr", password="caner2000")
+db = conn.connect(host="54.202.76.117", user="cnrkrglr", password="*******")
 cursor = db.cursor()
 
 
